@@ -12,9 +12,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
+        $this->app->singleton(
             \App\Contracts\AIProviderInterface::class,
-            \App\Services\AI\Providers\GeminiProvider::class
+            fn () => \App\Services\AI\AiProviderFactory::make()
         );
     }
 

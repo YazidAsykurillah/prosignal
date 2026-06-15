@@ -19,8 +19,8 @@ class MarketIntelligenceController extends Controller
         }
 
         $generation = $project->aiGenerations()->create([
-            'provider' => $aiProvider->getName(),
-            'model' => $aiProvider->getModel(),
+            'ai_provider' => $aiProvider->getName(),
+            'ai_model' => $aiProvider->getModel(),
             'type' => 'market_intelligence',
             'status' => 'pending',
         ]);

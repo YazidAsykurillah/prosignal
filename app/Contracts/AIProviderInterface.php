@@ -17,14 +17,8 @@ interface AIProviderInterface
     public function getModel(): string;
 
     /**
-     * Generate Market Intelligence for a given project.
-     * Must return an array with:
-     * - 'industries'
-     * - 'roles'
-     * - 'company_sizes'
-     * - 'opportunity_signals'
-     * - 'discovery_keywords'
-     * - 'raw_response'
+     * Generate content based on the provided payload.
+     * The payload typically contains a 'prompt' and optionally 'system_instruction' or other params.
      */
-    public function generateMarketIntelligence(Project $project, &$promptUsed = null): array;
+    public function generate(array $payload): array;
 }

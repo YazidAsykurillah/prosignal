@@ -25,7 +25,7 @@ export function Sidebar({ open, onClose }) {
                     <Zap className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-bold text-sidebar-primary-foreground tracking-tight">
+                    <span className="text-sm font-bold text-sidebar-foreground tracking-tight">
                         Signal Finder
                     </span>
                     <span className="text-[10px] font-medium text-sidebar-foreground/50 uppercase tracking-widest">

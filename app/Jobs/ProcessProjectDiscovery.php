@@ -39,17 +39,15 @@ class ProcessProjectDiscovery implements ShouldQueue
 
         $jobs = [];
         foreach ($keywords as $keyword) {
-            $jobs[] = new SearchAndCrawlKeyword($this->project, $this->discoveryRun, $keyword, $signal);
+            $jobs[] = new SearchJob($this->project, $this->discoveryRun, $keyword, $signal);
         }
 
         $discoveryRunId = $this->discoveryRun->id;
+        $project = $this->project;
 
         Bus::batch($jobs)
-            ->then(function (\Illuminate\Bus\Batch $batch) use ($discoveryRunId) {
-                DiscoveryRun::find($discoveryRunId)?->update([
-                    'status' => 'completed',
-                    'completed_at' => now(),
-                ]);
+            ->then(function (\Illuminate\Bus\Batch $batch) use ($project, $discoveryRunId, $signal) {
+                dispatch(new ProcessBatchExtractionJob($project, DiscoveryRun::find($discoveryRunId), $signal));
             })
             ->catch(function (\Illuminate\Bus\Batch $batch, Throwable $e) use ($discoveryRunId) {
                 DiscoveryRun::find($discoveryRunId)?->update([

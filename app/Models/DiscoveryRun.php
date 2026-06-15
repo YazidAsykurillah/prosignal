@@ -13,6 +13,10 @@ class DiscoveryRun extends Model
         'total_keywords',
         'total_urls',
         'total_companies',
+        'urls_found',
+        'urls_filtered',
+        'urls_analyzed',
+        'companies_found',
         'started_at',
         'completed_at',
     ];

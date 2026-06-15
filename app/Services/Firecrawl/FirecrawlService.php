@@ -35,8 +35,13 @@ class FirecrawlService
 
         $data = $response->json();
         
-        // Extract URLs from the search results
-        return collect($data['data'] ?? [])->pluck('url')->filter()->values()->toArray();
+        // Extract URLs and titles from the search results
+        return collect($data['data'] ?? [])->map(function ($item) {
+            return [
+                'url' => $item['url'] ?? null,
+                'title' => $item['title'] ?? null,
+            ];
+        })->filter(fn ($item) => !empty($item['url']))->values()->toArray();
     }
 
     public function crawl(string $url): ?string
@@ -59,6 +64,16 @@ class FirecrawlService
 
         $data = $response->json();
         
-        return $data['data']['markdown'] ?? null;
+        $markdown = $data['data']['markdown'] ?? '';
+        $title = $data['data']['metadata']['title'] ?? '';
+        $description = $data['data']['metadata']['description'] ?? '';
+
+        if (empty($markdown) && empty($title) && empty($description)) {
+            return null;
+        }
+
+        $reducedMarkdown = mb_substr($markdown, 0, 2000);
+
+        return trim("Title: {$title}\nMeta Description: {$description}\n\nContent:\n{$reducedMarkdown}");
     }
 }

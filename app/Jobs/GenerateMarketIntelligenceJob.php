@@ -41,8 +41,10 @@ class GenerateMarketIntelligenceJob implements ShouldQueue
         $generation->update(['status' => 'processing']);
 
         try {
-            $promptUsed = null;
-            $result = $aiProvider->generateMarketIntelligence($this->project, $promptUsed);
+            $promptUsed = \App\Services\AI\Prompts\MarketIntelligencePrompt::build($this->project);
+            $payload = ['prompt' => $promptUsed];
+            $result = $aiProvider->generate($payload);
+            $parsedResult = \App\Services\AI\Prompts\MarketIntelligencePrompt::parse($result['raw_response']);
 
             $generation->update([
                 'status' => 'completed',
@@ -54,11 +56,11 @@ class GenerateMarketIntelligenceJob implements ShouldQueue
             MarketIntelligence::updateOrCreate(
                 ['project_id' => $this->project->id],
                 [
-                    'industries' => $result['industries'] ?? [],
-                    'roles' => $result['roles'] ?? [],
-                    'company_sizes' => $result['company_sizes'] ?? [],
-                    'opportunity_signals' => $result['opportunity_signals'] ?? [],
-                    'discovery_keywords' => $result['discovery_keywords'] ?? [],
+                    'industries' => $parsedResult['industries'] ?? [],
+                    'roles' => $parsedResult['roles'] ?? [],
+                    'company_sizes' => $parsedResult['company_sizes'] ?? [],
+                    'opportunity_signals' => $parsedResult['opportunity_signals'] ?? [],
+                    'discovery_keywords' => $parsedResult['discovery_keywords'] ?? [],
                     'raw_ai_response' => $result['raw_response'] ?? null,
                 ]
             );
