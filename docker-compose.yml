@@ -1,0 +1,114 @@
+services:
+  # ============================================================================
+  # Application Web Server
+  # ============================================================================
+  web:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: web-prosignal
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+    volumes:
+      - .:/var/www/html
+    networks:
+      - prosignal-network
+      - web-gateway
+
+  # ============================================================================
+  # MySQL Database Server
+  # ============================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-prosignal
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-prosignal_root_secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-prosignal}
+      MYSQL_USER: ${DB_USERNAME:-prosignal}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-prosignal_secret}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - prosignal-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-prosignal_root_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Redis Cache & Queue
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: redis-prosignal
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - prosignal-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Mailpit — Development SMTP Server
+  # ============================================================================
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit-prosignal
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+    networks:
+      - prosignal-network
+      - web-gateway
+
+  # ============================================================================
+  # phpMyAdmin
+  # ============================================================================
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-prosignal
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME:-prosignal}
+      PMA_PASSWORD: ${DB_PASSWORD:-prosignal_secret}
+    ports:
+      - "8080:80"
+    networks:
+      - prosignal-network
+      - web-gateway
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  prosignal-network:
+    driver: bridge
+  web-gateway:
+    external: true
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local

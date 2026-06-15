@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+    /* ================================================================
+     * Color System — Brand Theme
+     * ================================================================ */
+
+    /* Background layers */
+    --color-background: #FCF7F8; /* Snow */
+    --color-foreground: #0A100D; /* Onyx */
+    --color-card: #FFFFFF;
+    --color-card-foreground: #0A100D;
+    --color-popover: #FFFFFF;
+    --color-popover-foreground: #0A100D;
+
+    /* Primary */
+    --color-primary: #275DAD; /* Tech Blue */
+    --color-primary-foreground: #FCF7F8;
+
+    /* Secondary */
+    --color-secondary: #FC7A1E; /* Pumpkin Spice */
+    --color-secondary-foreground: #FCF7F8;
+
+    /* Muted */
+    --color-muted: #F3F4F6;
+    --color-muted-foreground: #4B5563;
+
+    /* Accent */
+    --color-accent: #F3F4F6;
+    --color-accent-foreground: #0A100D;
+
+    /* Destructive */
+    --color-destructive: #EF4444;
+    --color-destructive-foreground: #FFFFFF;
+
+    /* Success / CTA */
+    --color-success: #22C55E;
+    --color-success-foreground: #FFFFFF;
+
+    /* Warning / Info */
+    --color-warning: #FC7A1E; /* Using Pumpkin Spice for Warning too */
+    --color-warning-foreground: #FCF7F8;
+    --color-info: #275DAD; /* Using Tech Blue for Info */
+    --color-info-foreground: #FCF7F8;
+
+    /* Border & Input */
+    --color-border: #E5E7EB;
+    --color-input: #E5E7EB;
+    --color-ring: #275DAD;
+
+    /* Chart palette */
+    --color-chart-1: #275DAD;
+    --color-chart-2: #FC7A1E;
+    --color-chart-3: #22C55E;
+    --color-chart-4: #EF4444;
+    --color-chart-5: #A855F7;
+
+    /* Sidebar */
+    --color-sidebar: #FFFFFF;
+    --color-sidebar-foreground: #0A100D;
+    --color-sidebar-primary: #275DAD;
+    --color-sidebar-primary-foreground: #FCF7F8;
+    --color-sidebar-accent: #F3F4F6;
+    --color-sidebar-accent-foreground: #0A100D;
+    --color-sidebar-border: #E5E7EB;
+    --color-sidebar-ring: #275DAD;
+
+    /* ================================================================
+     * Typography
+     * ================================================================ */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+    /* ================================================================
+     * Border Radius (Flat/Minimal)
+     * ================================================================ */
+    --radius-sm: 0.125rem;
+    --radius-md: 0.25rem;
+    --radius-lg: 0.375rem;
+    --radius-xl: 0.5rem;
+}
+
+/* ================================================================
+ * Base Styles
+ * ================================================================ */
+body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted-foreground);
+}
+
+/* Focus ring utility */
+.focus-ring {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+    outline-color: var(--color-ring);
+}
